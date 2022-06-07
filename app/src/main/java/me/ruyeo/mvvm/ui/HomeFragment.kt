@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import me.ruyeo.mvvm.R
 import me.ruyeo.mvvm.data.local.entity.News
 import me.ruyeo.mvvm.utils.UiStateList
@@ -35,21 +38,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.newsState.collect {
-                when(it){
-                    is UiStateObject.LOADING -> {
-                        //loading progress show
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.newsState.collect {
+                    when(it){
+                        is UiStateObject.LOADING -> {
+                            //loading progress show
+                        }
+                        is UiStateObject.SUCCESS -> {
+                            //adapterga listni bervoramiz
+                            Toast.makeText(requireContext(), it.data.description, Toast.LENGTH_SHORT).show()
+                        }
+                        is UiStateObject.ERROR -> {
+                            //show error like
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    is UiStateObject.SUCCESS -> {
-                    //adapterga listni bervoramiz
-                        Toast.makeText(requireContext(), it.data.description, Toast.LENGTH_SHORT).show()
-                    }
-                    is UiStateObject.ERROR -> {
-                        //show error like
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    }
-
                 }
             }
         }
