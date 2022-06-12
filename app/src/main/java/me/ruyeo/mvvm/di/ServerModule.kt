@@ -2,8 +2,11 @@ package me.ruyeo.mvvm.di
 
 import android.content.Context
 import android.provider.SyncStateContract
+import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import me.ruyeo.mvvm.data.remote.ApiService
 import me.ruyeo.mvvm.utils.Constants.BASE_URL
 import okhttp3.Interceptor
@@ -15,6 +18,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 class ServerModule {
 
     @Provides
